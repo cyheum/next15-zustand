@@ -1,33 +1,38 @@
-'use client'
+'use client';
 
-import React, { forwardRef, useEffect, useRef, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { IconClose } from '@svg';
+import Image from 'next/image';
+import React, {
+  CSSProperties,
+  forwardRef,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { createPortal } from 'react-dom';
 
-import { Button, ButtonProps } from '@/components'
-import { toBodyStyleHidden } from '@/utils'
-
-import * as S from './index.style'
+import { Button, ButtonProps } from '@/components';
+import { toBodyStyleHidden } from '@/utils';
 
 interface IProps {
-  maxHeight?: number
-  title?: string
-  children?: React.ReactNode
-  noCloseButton?: boolean
-  noHead?: boolean
-  closeButtonType?: ButtonProps['$buttonType']
-  closeButtonText?: string
-  containerStyle?: string
-  modalWrapperStyle?: string
-  titleStyle?: string
-  closeButtonStyle?: string
-  closeButtonWrapperStyle?: string
-  closeIconStyle?: string
-  noScrollLock?: boolean
-  closeAnimationToggle?: boolean
-  disabled?: boolean
-  isPartners?: boolean
-  onClickClose?(): void
-  onClickApply?(): void
+  maxHeight?: number;
+  title?: string;
+  children?: React.ReactNode;
+  noCloseButton?: boolean;
+  noHead?: boolean;
+  closeButtonType?: ButtonProps['$buttonType'];
+  closeButtonText?: string;
+  containerStyle?: CSSProperties;
+  modalWrapperStyle?: CSSProperties;
+  titleStyle?: CSSProperties;
+  closeButtonStyle?: CSSProperties;
+  closeButtonWrapperStyle?: CSSProperties;
+  closeIconStyle?: CSSProperties;
+  noScrollLock?: boolean;
+  closeAnimationToggle?: boolean;
+  disabled?: boolean;
+  onClickClose?(): void;
+  onClickApply?(): void;
 }
 
 export const BottomSheet = forwardRef<HTMLDivElement, IProps>(
@@ -49,79 +54,101 @@ export const BottomSheet = forwardRef<HTMLDivElement, IProps>(
       noScrollLock,
       closeAnimationToggle,
       disabled,
-      isPartners,
       onClickClose,
       onClickApply,
     },
     ref
   ) => {
-    const [mounted, setMounted] = useState(false)
-    const [isClosed, setIsClosed] = useState(false)
+    const [mounted, setMounted] = useState(false);
+    const [isClosed, setIsClosed] = useState(false);
     const [mousePosition, setMousePosition] = useState({
       downPositionY: 0,
       currentPositionY: 0,
       upPositionY: 0,
-    })
-    const [systemHeight, setSystemHeight] = useState(0)
-    const isPressed = useRef(false)
-    const animation = useRef(false)
-    const { currentPositionY, downPositionY } = mousePosition
-    const moveValue = currentPositionY - downPositionY
+    });
+    const [systemHeight, setSystemHeight] = useState(0);
+    const isPressed = useRef(false);
+    const animation = useRef(false);
+    const { currentPositionY, downPositionY } = mousePosition;
+    const moveValue = currentPositionY - downPositionY;
+    const styles = {
+      containerWrapper: `modal_container w-full h-full bg-inherit flex justify-start items-center`,
+
+      container: `flex justify-center items-end bg-[rgba(0, 0, 0, 0.6)] w-full h-full lg:max-w-450`,
+
+      modalWrapper: `relative w-full max-h-[70rem] rounded-t-[1rem] bg-white shadow-[0 0 0.875rem #0000001a] ${
+        isClosed || animation.current
+          ? 'transition-[transform] duration-400 ease-in-out'
+          : ''
+      } animate-appear2`,
+
+      svgWrapper: `absolute top-[1.875rem] right-[1.875rem] w-[1.75rem] h-[1.75rem] p-[0.1875rem]`,
+
+      svg: `w-full h-full object-contain`,
+
+      titleWrapper: `flex-center flex-col pt-[1.25rem] pb-[1.4375rem]`,
+
+      tabLine: `w-[6rem] h-[0.3125rem] rounded-[6.25rem] bg-[#cdcfd0]`,
+
+      title: `text-3xl leading-[2.375rem] whitespace-pre-line stop-drag`,
+
+      contentWrapper: `max-h-[calc(70vh - 5.25rem)] overflow-y-auto no-scroll`,
+    };
     const containerStyleObj = {
       transform: `translateY(${isClosed ? '100%' : `${moveValue}px`})`,
       WebkitTransformOrigin: `translateY(${
         isClosed ? '100%' : `${moveValue}px`
       })`,
-    }
+    };
 
     useEffect(() => {
-      setSystemHeight(window.innerHeight)
-    }, [])
+      setSystemHeight(window.innerHeight);
+    }, []);
 
     useEffect(() => {
-      setMounted(true)
+      setMounted(true);
       if (!noScrollLock) {
-        toBodyStyleHidden(true)
+        toBodyStyleHidden(true);
       }
 
       return () => {
-        setMounted(false)
-        setIsClosed(false)
-        toBodyStyleHidden(false)
-      }
-    }, [])
+        setMounted(false);
+        setIsClosed(false);
+        toBodyStyleHidden(false);
+      };
+    }, []);
 
     useEffect(() => {
       if (typeof closeAnimationToggle !== 'undefined' && closeAnimationToggle) {
-        onClickCloseButton()
+        onClickCloseButton();
       }
-    }, [closeAnimationToggle])
+    }, [closeAnimationToggle]);
 
     const onClickCloseButton = () => {
-      setIsClosed(true)
+      setIsClosed(true);
       setTimeout(() => {
-        onClickClose && onClickClose()
-      }, 400)
-    }
+        onClickClose && onClickClose();
+      }, 400);
+    };
 
     const onTouchStart = (position: number) => {
-      isPressed.current = true
+      isPressed.current = true;
       setMousePosition({
         currentPositionY: position,
         upPositionY: position,
         downPositionY: position,
-      })
-    }
+      });
+    };
 
     const onTouchMove = (position: number) => {
       if (isPressed.current && position > mousePosition.downPositionY) {
-        setMousePosition({ ...mousePosition, currentPositionY: position })
+        setMousePosition({ ...mousePosition, currentPositionY: position });
       }
-    }
+    };
 
     const onTouchEnd = (position: number, height: number) => {
-      isPressed.current = false
-      animation.current = true
+      isPressed.current = false;
+      animation.current = true;
       if (systemHeight) {
         if (
           position >
@@ -130,79 +157,78 @@ export const BottomSheet = forwardRef<HTMLDivElement, IProps>(
           setMousePosition({
             ...mousePosition,
             currentPositionY: systemHeight + height,
-          })
-          onClickCloseButton()
+          });
+          onClickCloseButton();
         } else {
           setMousePosition({
             ...mousePosition,
             currentPositionY: mousePosition.downPositionY,
-          })
+          });
         }
       }
-      setTimeout(() => (animation.current = false), 400)
-    }
+      setTimeout(() => (animation.current = false), 400);
+    };
 
     return mounted
       ? createPortal(
-          <S.ContainerWrapper
+          <div
             ref={ref}
+            className={styles.containerWrapper}
             onMouseMove={(e) => onTouchMove(e.clientY)}
             onTouchMove={(e) => onTouchMove(e.touches[0].clientY)}
             onMouseUp={(e) => {
-              e.stopPropagation()
+              e.stopPropagation();
               isPressed.current
                 ? onTouchEnd(e.clientY, e.currentTarget.clientHeight)
-                : onClickCloseButton()
+                : onClickCloseButton();
             }}
             onTouchEnd={(e) => {
-              e.stopPropagation()
+              e.stopPropagation();
               isPressed.current
                 ? onTouchEnd(
                     e.changedTouches[0].clientY,
                     e.currentTarget.clientHeight
                   )
-                : onClickCloseButton()
+                : onClickCloseButton();
             }}
           >
-            <S.Container
-              $containerStyle={containerStyle}
-              $isPartners={isPartners}
-            >
-              <S.ModalWrapper
-                $animationOn={isClosed || animation.current}
-                style={containerStyleObj}
-                $isClosed={isClosed}
-                $maxHeight={maxHeight}
-                $modalWrapperStyle={modalWrapperStyle}
+            <div className={styles.container} style={containerStyle}>
+              <div
+                className={styles.modalWrapper}
+                style={{ ...containerStyleObj, ...modalWrapperStyle }}
                 onClick={(e) => e.stopPropagation()}
               >
                 {!noCloseButton && (
-                  <S.CloseSvgButton
+                  <button
+                    className={styles.svgWrapper}
+                    style={closeIconStyle}
                     onClick={onClickCloseButton}
-                    $closeIconStyle={closeIconStyle}
                   >
-                    <S.IconCloseStyled />
-                  </S.CloseSvgButton>
+                    <Image src={IconClose} alt={'svg'} className={styles.svg} />
+                  </button>
                 )}
                 {!noHead && (
-                  <S.TitleWrapper
+                  <div
+                    className={styles.titleWrapper}
                     onMouseDown={(e) => onTouchStart(e.clientY)}
                     onTouchStart={(e) => onTouchStart(e.touches[0].clientY)}
                   >
-                    <p className='tab_line' />
+                    <p className={styles.tabLine} />
                     {title && (
-                      <S.Title $titleStyle={titleStyle}>{title}</S.Title>
+                      <h2 className={styles.title} style={titleStyle}>
+                        {title}
+                      </h2>
                     )}
-                  </S.TitleWrapper>
+                  </div>
                 )}
-                <S.ContentWrapper
-                  $maxHeight={maxHeight}
+                <div
+                  className={styles.contentWrapper}
                   onMouseUp={(e) => e.stopPropagation()}
                   onTouchEnd={(e) => e.stopPropagation()}
                 >
                   {children}
                   {closeButtonType && closeButtonText && (
-                    <S.ApplyButtonWrapper $cssStyle={closeButtonWrapperStyle}>
+                    <div style={closeButtonWrapperStyle}>
                       <Button
                         type={closeButtonType}
                         $buttonstyle={closeButtonStyle}
@@ -210,19 +236,19 @@ export const BottomSheet = forwardRef<HTMLDivElement, IProps>(
                         text={closeButtonText}
                         onClick={() => {
                           if (onClickApply) {
-                            onClickApply()
-                            onClickCloseButton()
+                            onClickApply();
+                            onClickCloseButton();
                           }
                         }}
                       />
-                    </S.ApplyButtonWrapper>
+                    </div>
                   )}
-                </S.ContentWrapper>
-              </S.ModalWrapper>
-            </S.Container>
-          </S.ContainerWrapper>,
+                </div>
+              </div>
+            </div>
+          </div>,
           document.querySelector('#myportal')!
         )
-      : null
+      : null;
   }
-)
+);

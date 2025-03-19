@@ -3,6 +3,8 @@ import './globals.css';
 import type { Metadata } from 'next';
 import { Noto_Sans } from 'next/font/google';
 
+import { InitialFetch } from '@/components';
+
 const notoSans = Noto_Sans({
   variable: '--font-noto-sans',
   subsets: ['latin'],
@@ -20,7 +22,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className={notoSans.variable}>
-      <body className={`${notoSans.variable} antialiased`}>{children}</body>
+      <body className={`${notoSans.variable} antialiased`}>
+        <InitialFetch />
+        <div id="myportal" />
+        {children}
+      </body>
     </html>
   );
 }

@@ -1,35 +1,35 @@
-'use client'
+'use client';
 
-import React, { forwardRef, useEffect, useState } from 'react'
-import { createPortal } from 'react-dom'
+import { IconClose, IconCloseWhite } from '@svg';
+import Image from 'next/image';
+import React, { CSSProperties, forwardRef, useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 
-import { Button, ButtonProps } from '@/components'
-import { toBodyStyleHidden } from '@/utils'
-
-import * as S from './index.style'
+import { Button, ButtonProps } from '@/components';
+import { toBodyStyleHidden } from '@/utils';
 
 interface IProps {
-  title?: string | React.ReactNode
-  fullWidth?: boolean
-  description?: string | React.ReactNode
-  children?: React.ReactNode
-  closeButtonText?: string
-  noBackClose?: boolean
-  noCloseButton?: boolean
-  containerStyle?: string
-  modalWrapperStyle?: string
-  buttonStyle?: string
-  titleStyle?: string
-  descriptionStyle?: string
-  topCloseButtonStyle?: string
-  whiteTopCloseButton?: boolean
-  closeButtonType?: ButtonProps['$buttonType']
-  closeAnimationToggle?: boolean
-  noScrollLock?: boolean
-  noOverflow?: boolean
-  phoneMaxWidth?: boolean
-  onClickClose?(): void
-  onClickApply?(): void
+  title?: string | React.ReactNode;
+  fullWidth?: boolean;
+  description?: string | React.ReactNode;
+  children?: React.ReactNode;
+  closeButtonText?: string;
+  noBackClose?: boolean;
+  noCloseButton?: boolean;
+  containerStyle?: CSSProperties;
+  modalWrapperStyle?: CSSProperties;
+  buttonStyle?: CSSProperties;
+  titleStyle?: CSSProperties;
+  descriptionStyle?: CSSProperties;
+  topCloseButtonStyle?: CSSProperties;
+  whiteTopCloseButton?: boolean;
+  closeButtonType?: ButtonProps['$buttonType'];
+  closeAnimationToggle?: boolean;
+  noScrollLock?: boolean;
+  noOverflow?: boolean;
+  phoneMaxWidth?: boolean;
+  onClickClose?(): void;
+  onClickApply?(): void;
 }
 
 export const BasicModal = forwardRef<HTMLDivElement, IProps>(
@@ -59,70 +59,101 @@ export const BasicModal = forwardRef<HTMLDivElement, IProps>(
     },
     ref
   ) => {
-    const [mounted, setMounted] = useState(false)
-    const [isClosed, setIsClosed] = useState(false)
+    const [mounted, setMounted] = useState(false);
+    const [isClosed, setIsClosed] = useState(false);
+
+    const styles = {
+      container: `modal_container`,
+
+      modalWrapper: `${
+        fullWidth ? 'w-full' : 'w-auto'
+      } relatvie max-h-[90vh] mx-[1.125rem] pt-[1.875rem] pb-[1.125rem] px-[1.125rem] rounded-2xl bg-white ${
+        isClosed ? 'opacity-[0]' : 'opacity-[1]'
+      } transition-all ease-in-out duration-400 animate-appear ${
+        isClosed ? 'transform-[translateY(5%)]' : 'transform-[translateY(0)]'
+      } ${phoneMaxWidth ? 'md:max-x-[25.625rem]' : ''}`,
+
+      modalInner: `max-h-[85vh] ${
+        noOverflow ? '' : 'overflow-y-scroll'
+      } no-scroll`,
+
+      title: `font-bold leading-[1.75rem] mb-[0.875rem] text-xl text-black`,
+
+      description: `leading-[1.6rem] pb-[0.75rem] text-base text-gray-900 whitespace-pre-line`,
+
+      svgWrapper: `absolute top-[1.875rem] right-[1.875rem] w-[2rem] h-[2rem] p-[0.25rem]`,
+
+      svg: `w-full h-full object-contain`,
+    };
 
     useEffect(() => {
-      setMounted(true)
+      setMounted(true);
       if (!noScrollLock) {
-        toBodyStyleHidden(true)
+        toBodyStyleHidden(true);
       }
 
       return () => {
-        setMounted(false)
-        setIsClosed(false)
-        toBodyStyleHidden(false)
-      }
-    }, [])
+        setMounted(false);
+        setIsClosed(false);
+        toBodyStyleHidden(false);
+      };
+    }, []);
 
     useEffect(() => {
       if (typeof closeAnimationToggle !== 'undefined' && closeAnimationToggle) {
-        onClickCloseButton()
+        onClickCloseButton();
       }
-    }, [closeAnimationToggle])
+    }, [closeAnimationToggle]);
 
     const onClickCloseButton = () => {
-      setIsClosed(true)
+      setIsClosed(true);
       setTimeout(() => {
         if (onClickClose) {
-          onClickClose()
+          onClickClose();
         }
-      }, 400)
-    }
+      }, 400);
+    };
 
     return mounted
       ? createPortal(
-          <S.Container
+          <div
             ref={ref}
+            className={styles.container}
+            style={containerStyle}
             onClick={!noBackClose ? onClickCloseButton : undefined}
-            $containerStyle={containerStyle}
           >
-            <S.ModalWrapper
-              $fullWidth={fullWidth}
-              $isClosed={isClosed}
-              $noOverflow={noOverflow}
-              $phoneMaxWidth={phoneMaxWidth}
-              $modalWrapperStyle={modalWrapperStyle}
+            <div
+              className={styles.modalWrapper}
+              style={modalWrapperStyle}
               onClick={(e) => e.stopPropagation()}
             >
               {!noCloseButton && (
-                <S.CloseSvgButton
-                  $cssStyle={topCloseButtonStyle}
+                <button
+                  style={topCloseButtonStyle}
+                  className={styles.svgWrapper}
                   onClick={onClickCloseButton}
                 >
                   {whiteTopCloseButton ? (
-                    <S.IconWhiteClose />
+                    <Image
+                      src={IconCloseWhite}
+                      alt={'svg'}
+                      className={styles.svg}
+                    />
                   ) : (
-                    <S.IconCloseStyled />
+                    <Image src={IconClose} alt={'svg'} className={styles.svg} />
                   )}
-                </S.CloseSvgButton>
+                </button>
               )}
-              <div className='basic_modal_wrapper'>
-                {title && <S.Title $titleStyle={titleStyle}>{title}</S.Title>}
+              <div className={styles.modalInner}>
+                {title && (
+                  <h1 style={titleStyle} className={styles.title}>
+                    {title}
+                  </h1>
+                )}
                 {description ? (
-                  <S.Description $descriptionStyle={descriptionStyle}>
+                  <p style={descriptionStyle} className={styles.description}>
                     {description}
-                  </S.Description>
+                  </p>
                 ) : (
                   children
                 )}
@@ -136,30 +167,30 @@ export const BasicModal = forwardRef<HTMLDivElement, IProps>(
                     text={closeButtonText}
                     onClick={() => {
                       if (onClickApply) {
-                        onClickApply()
+                        onClickApply();
                       }
-                      onClickCloseButton()
+                      onClickCloseButton();
                     }}
                   />
                 ) : (
-                  <S.CloseButtonWrapper buttonStyle={buttonStyle}>
+                  <div style={buttonStyle}>
                     <button
                       className={'button'}
                       onClick={() => {
                         if (onClickApply) {
-                          onClickApply()
+                          onClickApply();
                         }
-                        onClickCloseButton()
+                        onClickCloseButton();
                       }}
                     >
                       {closeButtonText}
                     </button>
-                  </S.CloseButtonWrapper>
+                  </div>
                 ))}
-            </S.ModalWrapper>
-          </S.Container>,
+            </div>
+          </div>,
           document.querySelector('#myportal')!
         )
-      : null
+      : null;
   }
-)
+);
