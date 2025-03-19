@@ -70,7 +70,7 @@ export const Button: React.FC<IProps> = ({
     button: `flex-center ${$isLight ? 'font-medium' : 'font-semibold'} ${
       lineHeight ? `leading-[${lineHeight}rem]` : ''
     } w-full max-w-full  h-[3rem] mx-auto text-[0.9375rem] whitespace-pre font-[inherit] rounded-[0.625rem] transition-all border border-solid ${
-      noClick ? 'cursor-pointer' : ''
+      noClick ? '' : 'cursor-pointer'
     }  ${getClassName}`,
 
     commonDisabled: `disabled:border disabled:border-solid disabled:border-gray-170 disabled:text-white disabled:bg-gray-170 disabled:cursor-not-allowed`,
