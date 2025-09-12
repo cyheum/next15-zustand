@@ -14,3 +14,9 @@ export { BasicModal, BottomSheet, Button, InitialFetch, Slider };
 import { HomeContainer } from './layout/Home';
 
 export { HomeContainer };
+
+// text
+
+import { TestContainer } from './layout/Test';
+
+export { TestContainer };

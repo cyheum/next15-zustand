@@ -38,7 +38,7 @@ const formSchema = z.object({
     .max(500, { message: '메시지는 최대 500자까지 입력 가능합니다.' }),
 });
 
-export const HomeContainer: React.FC = () => {
+export const TestContainer: React.FC = () => {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     mode: 'all',

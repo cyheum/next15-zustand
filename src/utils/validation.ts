@@ -9,3 +9,12 @@ export const rexBirth = /^(19|20)\d{2}(0[1-9]|1[0-2])(0[1-9]|[12][0-9]|3[01])$/;
 
 // 영문 숫자 허용
 export const rexName = /^(?!.*\.\.)(?!.*\.$)[a-zA-Z0-9._]{1,30}$/;
+
+// 숫자 특수문자 제외
+export const rexNameOnlyStr = /^[\p{L}_]+$/u;
+
+// 특수문자 제외
+export const rexNameWithNum = /^[\p{L}\p{N}_]+$/u;
+
+// 영문, 숫자, 특수문자 조합
+export const rexPw = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[^\w\s]).+$/;

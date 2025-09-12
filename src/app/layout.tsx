@@ -4,6 +4,7 @@ import type { Metadata } from 'next';
 import { Noto_Sans } from 'next/font/google';
 
 import { InitialFetch } from '@/components';
+import { Toaster } from '@/shadcn/components/ui/sonner';
 
 const notoSans = Noto_Sans({
   variable: '--font-noto-sans',
@@ -26,6 +27,7 @@ export default function RootLayout({
         <InitialFetch />
         <div id="myportal" />
         {children}
+        <Toaster />
       </body>
     </html>
   );
