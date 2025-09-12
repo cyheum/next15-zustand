@@ -1,6 +1,6 @@
 import { create } from 'zustand';
 
-import { GET } from '@/utils';
+import { DOMAIN, GET } from '@/utils';
 
 interface HomeStore {
   isLoading: {
@@ -17,6 +17,7 @@ interface HomeStore {
 
   fetch: {
     getData(): void;
+    getMe(): void;
   };
 }
 
@@ -43,6 +44,36 @@ const useHomeStore = create<HomeStore>((set, get) => ({
         console.error('Get Favorite Coin List Error:', e);
       } finally {
         set({ isLoading: { ...get().isLoading, main: false } });
+      }
+    },
+    getMe: async () => {
+      try {
+        const data: any = await GET(`${DOMAIN}/me`);
+
+        console.log(data);
+
+        // set({
+        //   me: data,
+        // });
+
+        // if (analytics) {
+        //   setUserId(analytics, data.username);
+        //   setUserProperties(analytics, {
+        //     uuid: data.uuid,
+        //     username: data.username,
+        //     email: data.email ?? '',
+        //     mobile_number: data.profile?.mobile_number ?? '',
+        //   });
+        // }
+
+        // identifyUser({
+        //   id: data.uuid,
+        //   username: data.username,
+        //   nickname: data.profile?.nickname ?? '',
+        //   mobile_number: data.profile?.mobile_number ?? '',
+        // });
+      } catch (error) {
+        console.error(error);
       }
     },
   },

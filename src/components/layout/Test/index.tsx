@@ -1,6 +1,9 @@
 'use client';
 
 import { zodResolver } from '@hookform/resolvers/zod';
+import axios from 'axios';
+import { setCookie } from 'cookies-next';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -24,7 +27,7 @@ import {
   Textarea,
 } from '@/shadcn';
 import { useHomeStore } from '@/store';
-import { rexName } from '@/utils';
+import { DOMAIN, rexName } from '@/utils';
 // import { rexName } from '@/utils';
 
 const formSchema = z.object({
@@ -50,7 +53,8 @@ export const TestContainer: React.FC = () => {
   });
   const { formState } = form;
   // const { errors } = formState;
-  const { count, actions } = useHomeStore();
+  const { fetch, count, actions, isLoading } = useHomeStore();
+  const router = useRouter();
   const styles = {
     container: 'm-5',
   };
@@ -59,16 +63,44 @@ export const TestContainer: React.FC = () => {
 
   console.log(formState);
 
-  async function onSubmit(values: z.infer<typeof formSchema>) {
+  const onSubmit = async (values: z.infer<typeof formSchema>) => {
+    actions.setIsLoading({ ...isLoading, main: true });
+    try {
+      const { data } = await axios.post(`${DOMAIN}/api/auth/token`, {
+        username: values.name,
+        password: values.email,
+      });
+      const ONE_YEAR = 60 * 60 * 24 * 365;
+      setCookie('accessToken', data?.access, {
+        maxAge: ONE_YEAR,
+        expires: new Date(Date.now() + ONE_YEAR * 1000),
+      });
+      fetch.getMe();
+      if (typeof window !== 'undefined') {
+        const prevUrl = sessionStorage.getItem('prevUrl');
+        if (prevUrl) {
+          sessionStorage.removeItem('prevUrl');
+          router.push(prevUrl);
+        } else {
+          router.push('/');
+        }
+      } else {
+        router.push('/');
+      }
+      toast.success('로그인 성공!');
+    } catch (error) {
+      console.error(error);
+      toast.error('로그인에 실패했습니다.\n아이디와 비밀번호를 확인해주세요.');
+    }
+    actions.setIsLoading({ ...isLoading, main: false });
     try {
       // Simulate a successful contact form submission
       console.log(values);
-      toast.success('Your message has been sent successfully!');
     } catch (error) {
       console.error('Error submitting contact form', error);
       toast.error('Failed to send your message. Please try again.');
     }
-  }
+  };
 
   return (
     <>
@@ -208,7 +240,7 @@ export const TestContainer: React.FC = () => {
                     className="w-full"
                     disabled={!isButtonOn}
                   >
-                    Send Message
+                    Login
                   </Button>
                 </div>
               </form>
