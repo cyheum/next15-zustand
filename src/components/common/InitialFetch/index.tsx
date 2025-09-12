@@ -1,5 +1,6 @@
 'use client';
 
+import { getCookie } from 'cookies-next';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 
@@ -14,7 +15,7 @@ export const InitialFetch: React.FC = () => {
   const isLoading = homeLoading.main;
 
   useEffect(() => {
-    const accessToken = window?.localStorage.getItem('accessToken');
+    const accessToken = getCookie('accessToken');
     const noGoLogin = [
       '/login',
       'signin',
