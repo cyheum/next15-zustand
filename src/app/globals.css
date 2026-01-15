@@ -216,6 +216,9 @@
   --animate-appear: appear 400ms backwards ease-in-out;
   --animate-appear2: appear2 400ms backwards ease-in-out;
   --animate-rotate: rotate 1s linear infinite;
+  --animate-lds1: lds_ellipsis1 0.6s infinite;
+  --animate-lds2: lds_ellipsis2 0.6s infinite;
+  --animate-lds3: lds_ellipsis3 0.6s infinite;
 
   @keyframes apper {
     from {
@@ -243,6 +246,42 @@
     }
     to {
       transform: rotate(360deg);
+    }
+  }
+
+  @keyframes appear2 {
+    from {
+      transform: translateY(100%);
+    }
+    to {
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes lds_ellipsis1 {
+    0% {
+      transform: scale(0);
+    }
+    100% {
+      transform: scale(1);
+    }
+  }
+
+  @keyframes lds_ellipsis2 {
+    0% {
+      transform: translate(0, 0);
+    }
+    100% {
+      transform: translate(184.61%, 0);
+    }
+  }
+
+  @keyframes lds_ellipsis3 {
+    0% {
+      transform: scale(1);
+    }
+    100% {
+      transform: scale(0);
     }
   }
 }
